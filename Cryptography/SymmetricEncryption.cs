@@ -21,7 +21,7 @@ namespace Cryptography
         // This constant determines the number of iterations for the password bytes generation function.
         private const int DerivationIterations = 1000;
 
-        public static string Encrypt(string plainText, string passPhrase)
+        public static string EncryptText(string plainText, string passPhrase)
         {
             // Salt and IV is randomly generated each time, but is preprended to encrypted cipher text
             // so that the same Salt and IV values can be used when decrypting.  
@@ -58,7 +58,7 @@ namespace Cryptography
             }
         }
 
-        public static string Decrypt(string cipherText, string passPhrase)
+        public static string DecryptText(string cipherText, string passPhrase)
         {
             // Get the complete stream of bytes that represent:
             // [32 bytes of Salt] + [32 bytes of IV] + [n bytes of CipherText]
@@ -93,6 +93,19 @@ namespace Cryptography
                         }
                     }
                 }
+            }
+        }
+
+        public static byte[] GenerateKey(string passPhrase)
+        {
+            // Salt and IV is randomly generated each time, but is preprended to encrypted cipher text
+            // so that the same Salt and IV values can be used when decrypting.  
+            var saltStringBytes = Generate256BitsOfRandomEntropy();
+            using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations))
+            {
+                var keyBytes = password.GetBytes(Keysize / 8);
+
+                return keyBytes;
             }
         }
 

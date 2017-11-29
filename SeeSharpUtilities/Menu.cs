@@ -12,27 +12,29 @@ namespace SeeSharpUtilities
 {
     class Menu
     {
-        public string menuName { get; set; }
+        public string MenuName { get; set; }
 
-        public List<string> menuOptions { get; set; }
+        public List<string> MenuOptions { get; set; }
 
         public Menu(string name, List<string> options)
         {
-            menuName = name;
-            menuOptions = options;
+            MenuName = name;
+            MenuOptions = options;
         }
 
         public int Display()
         {
-            Console.WriteLine(menuName);
+            Console.WriteLine(MenuName);
             Console.WriteLine();
             Console.WriteLine("0. Exit");
-            foreach (string option in menuOptions)
+            foreach (string option in MenuOptions)
             {
                 Console.WriteLine(option);
             }
 
+            Console.Write("Enter choice: ");
             var result = Console.ReadLine();
+            Console.Clear();
             return Convert.ToInt32(result);
         }
     }

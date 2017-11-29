@@ -9,12 +9,13 @@ namespace SeeSharpUtilities
 {
     class RunableOptions
     {
-        public static void Cryptography()
+        public static void Cryptography(string passphrase)
         {
             List<string> options = new List<string>
             {
-                "1. Symmetric encryption of a string",
-                "2. Symmetric decryption of a string"
+                "1. Symmetric encryption of a text",
+                "2. Symmetric decryption of a text",
+                "3. Generate symmetric key"
             };
             Menu cryptographyMenu = new Menu("Cryptography", options);
 
@@ -22,11 +23,28 @@ namespace SeeSharpUtilities
             do
             {
                 userInput = cryptographyMenu.Display();
+                string inputText;
 
                 switch (userInput)
                 {
                     case 1:
-                        //SymmetricEncryption.Encrypt();
+                        Console.Write("Enter text: ");
+                        inputText = Console.ReadLine();
+
+                        string encryptedText = SymmetricEncryption.EncryptText(inputText, passphrase);
+                        Console.WriteLine("Encrypted text: " + encryptedText);
+                        break;
+                    case 2:
+                        Console.Write("Enter text: ");
+                        inputText = Console.ReadLine();
+
+                        string decryptedText = SymmetricEncryption.DecryptText(inputText, passphrase);
+                        Console.WriteLine("Decrypted text: " + decryptedText);
+                        break;
+                    case 3:
+                        byte[] key = SymmetricEncryption.GenerateKey(passphrase);
+                        string keyAsString = Encoding.Default.GetString(key, 0, key.Length);
+                        Console.WriteLine("Key: " + keyAsString);
                         break;
                     default:
                         break;
