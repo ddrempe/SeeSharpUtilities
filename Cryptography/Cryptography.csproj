@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsymmetricEncryption.cs" />
+    <Compile Include="Hashing.cs" />
     <Compile Include="SymmetricEncryption.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

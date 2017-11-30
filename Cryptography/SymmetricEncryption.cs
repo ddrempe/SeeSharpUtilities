@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 /* SOURCES:
 https://stackoverflow.com/questions/10168240/encrypting-decrypting-a-string-in-c-sharp
+https://stackoverflow.com/questions/11654562/how-convert-byte-array-to-string
+https://stackoverflow.com/questions/10940883/c-converting-byte-array-to-string-and-printing-out-to-console
 */
 
 namespace Cryptography

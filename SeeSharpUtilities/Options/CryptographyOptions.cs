@@ -19,6 +19,7 @@ namespace SeeSharpUtilities
                 "3. Generate symmetric key",
                 "4. Asymmetric encryption/decryption of a text",
                 "5. Generate asymmetric key pair",
+                "6. Hash text"
             };
             Menu cryptographyMenu = new Menu("Cryptography", options);
 
@@ -80,6 +81,13 @@ namespace SeeSharpUtilities
 
                         Console.WriteLine("Public key: " + pubKeyString);
                         Console.WriteLine("Private key: " + privKeyString);
+                        break;
+                    case 6:
+                        Console.Write("Enter plain text: ");
+                        inputText = Console.ReadLine();
+
+                        string hashedText = Hashing.GetHashedText(inputText);
+                        Console.WriteLine("Hashed text: " + hashedText);
                         break;
                     default:
                         break;
