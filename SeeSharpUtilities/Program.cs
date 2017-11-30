@@ -21,8 +21,7 @@ namespace SeeSharpUtilities
             switch (userInput)
             {
                 case 1:
-                    string passphrase = "dummy passphrase"; //TODO: maybe read from config file
-                    RunableOptions.Cryptography(passphrase);
+                    CryptographyOptions.Run();
                     break;
                 default:
                     break;

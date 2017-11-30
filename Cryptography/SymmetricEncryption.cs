@@ -96,7 +96,7 @@ namespace Cryptography
             }
         }
 
-        public static byte[] GenerateKey(string passPhrase)
+        public static string GenerateKey(string passPhrase)
         {
             // Salt and IV is randomly generated each time, but is preprended to encrypted cipher text
             // so that the same Salt and IV values can be used when decrypting.  
@@ -104,9 +104,11 @@ namespace Cryptography
             using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations))
             {
                 var keyBytes = password.GetBytes(Keysize / 8);
+                string keyAsString = Encoding.Default.GetString(keyBytes, 0, keyBytes.Length);
 
-                return keyBytes;
+                return keyAsString;
             }
+
         }
 
         private static byte[] Generate256BitsOfRandomEntropy()
