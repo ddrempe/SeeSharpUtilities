@@ -12,17 +12,14 @@ namespace Cryptography
     {
         public static string GetHashedText(string plainText)
         {
-            //TODO: check if UTF8 is needed encoding instead of default
-            byte[] bytes = Encoding.Default.GetBytes(plainText);
-
-            // Initialize a SHA256 hash object.
-            SHA256 newSHA256 = SHA256.Create();
-
-            // Compute the hash
-            byte[] hashedText = newSHA256.ComputeHash(bytes);
-            string hashedTextString = Encoding.Default.GetString(hashedText, 0, hashedText.Length);
-
-            return hashedTextString;
+            SHA256Managed crypt = new SHA256Managed();
+            StringBuilder hash = new StringBuilder();
+            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(plainText), 0, Encoding.UTF8.GetByteCount(plainText));
+            foreach (byte theByte in crypto)
+            {
+                hash.Append(theByte.ToString("x2"));
+            }
+            return hash.ToString();
         }
     }
 }
