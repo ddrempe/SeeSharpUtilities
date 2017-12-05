@@ -27,7 +27,7 @@ namespace SeeSharpUtilities
             do
             {
                 userInput = cryptographyMenu.Display();
-                string passphrase = "dummy passphrase"; //TODO: maybe read from config file
+                string keyString;
                 string inputText;
                 string encryptedText;
                 string decryptedText;
@@ -36,21 +36,25 @@ namespace SeeSharpUtilities
                 {
                     //SYMMETRIC ENCRYPTION
                     case 1:
+                        Console.Write("Enter key string: ");
+                        keyString = Console.ReadLine();
                         Console.Write("Enter plain text: ");
                         inputText = Console.ReadLine();
 
-                        encryptedText = SymmetricEncryption.EncryptText(inputText, passphrase);
+                        encryptedText = SymmetricEncryption.EncryptString_Aes(inputText, keyString);
                         Console.WriteLine("Encrypted text: " + encryptedText);
                         break;
                     case 2:
+                        Console.Write("Enter key string: ");
+                        keyString = Console.ReadLine();
                         Console.Write("Enter encrypted text: ");
                         inputText = Console.ReadLine();
 
-                        decryptedText = SymmetricEncryption.DecryptText(inputText, passphrase);
+                        decryptedText = SymmetricEncryption.DecryptString_Aes(inputText, keyString);
                         Console.WriteLine("Decrypted text: " + decryptedText);
                         break;
                     case 3:
-                        string symmetricKey = SymmetricEncryption.GenerateKey(passphrase);
+                        string symmetricKey = SymmetricEncryption.GenerateKey_Aes();
                         Console.WriteLine("Key: " + symmetricKey);
                         break;
                     //ASYMMETRIC ENCRYPTION

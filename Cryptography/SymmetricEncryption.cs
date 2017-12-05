@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 https://stackoverflow.com/questions/10168240/encrypting-decrypting-a-string-in-c-sharp
 https://stackoverflow.com/questions/11654562/how-convert-byte-array-to-string
 https://stackoverflow.com/questions/10940883/c-converting-byte-array-to-string-and-printing-out-to-console
+
+https://msdn.microsoft.com/en-us/library/system.security.cryptography.aes(v=vs.110).aspx
+https://gist.github.com/mark-adams/87aa34da3a5ed48ed0c7
+https://stackoverflow.com/questions/1003275/how-to-convert-utf-8-byte-to-string
 */
 
 namespace Cryptography
@@ -98,6 +102,7 @@ namespace Cryptography
             }
         }
 
+        //TODO: remove cause it is useless
         public static string GenerateKey(string passPhrase)
         {
             // Salt and IV is randomly generated each time, but is preprended to encrypted cipher text
@@ -106,7 +111,7 @@ namespace Cryptography
             using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations))
             {
                 var keyBytes = password.GetBytes(Keysize / 8);
-                string keyAsString = Encoding.Default.GetString(keyBytes, 0, keyBytes.Length);
+                string keyAsString = Encoding.ASCII.GetString(keyBytes, 0, keyBytes.Length);
 
                 return keyAsString;
             }
@@ -122,6 +127,105 @@ namespace Cryptography
                 rngCsp.GetBytes(randomBytes);
             }
             return randomBytes;
+        }
+
+        public static string GenerateKey_Aes()
+        {
+            using (var random = new RNGCryptoServiceProvider())
+            {
+                var key = new byte[16];
+                random.GetBytes(key);
+
+                return Convert.ToBase64String(key);
+            }
+        }
+
+        public static string EncryptString_Aes(string plainText, string keyString)
+        {
+            byte[] Key = Convert.FromBase64String(keyString);
+            byte[] encrypted;
+            byte[] IV;
+
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+
+                aesAlg.GenerateIV();
+                IV = aesAlg.IV;
+
+                aesAlg.Mode = CipherMode.CBC;
+
+                var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for encryption. 
+                using (var msEncrypt = new MemoryStream())
+                {
+                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (var swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            //Write all data to the stream.
+                            swEncrypt.Write(plainText);
+                        }
+                        encrypted = msEncrypt.ToArray();
+                    }
+                }
+            }
+
+            var combinedIvCt = new byte[IV.Length + encrypted.Length];
+            Array.Copy(IV, 0, combinedIvCt, 0, IV.Length);
+            Array.Copy(encrypted, 0, combinedIvCt, IV.Length, encrypted.Length);
+
+            // Return the encrypted bytes from the memory stream. 
+            return Convert.ToBase64String(combinedIvCt);
+        }
+
+        public static string DecryptString_Aes(string cipherTextCombinedString, string keyString)
+        {
+            byte[] cipherTextCombined = Convert.FromBase64String(cipherTextCombinedString);
+            byte[] Key = Convert.FromBase64String(keyString);
+
+            // Declare the string used to hold 
+            // the decrypted text. 
+            string plaintext = null;
+
+            // Create an Aes object 
+            // with the specified key and IV. 
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+
+                byte[] IV = new byte[aesAlg.BlockSize / 8];
+                byte[] cipherText = new byte[cipherTextCombined.Length - IV.Length];
+
+                Array.Copy(cipherTextCombined, IV, IV.Length);
+                Array.Copy(cipherTextCombined, IV.Length, cipherText, 0, cipherText.Length);
+
+                aesAlg.IV = IV;
+
+                aesAlg.Mode = CipherMode.CBC;
+
+                // Create a decrytor to perform the stream transform.
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for decryption. 
+                using (var msDecrypt = new MemoryStream(cipherText))
+                {
+                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (var srDecrypt = new StreamReader(csDecrypt))
+                        {
+
+                            // Read the decrypted bytes from the decrypting stream
+                            // and place them in a string.
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+
+            }
+
+            return plaintext;
         }
     }
 }
