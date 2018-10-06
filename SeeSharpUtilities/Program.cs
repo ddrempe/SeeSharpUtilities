@@ -10,6 +10,22 @@ namespace SeeSharpUtilities
     {
         static void Main(string[] args)
         {
+            List<string> options = new List<string>
+            {
+                "1. Cryptography"
+            };
+            Menu mainMenu = new Menu("Main menu", options);
+                        
+            int userInput = mainMenu.Display();
+
+            switch (userInput)
+            {
+                case 1:
+                    CryptographyOptions.Run();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
